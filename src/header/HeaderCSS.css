@@ -1,0 +1,6 @@
+.black-nav{
+    display: flex;
+    background-color: black;
+    width: 100vw;
+    color: white;
+}
