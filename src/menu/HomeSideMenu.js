@@ -10,7 +10,7 @@ const HomeSideMenu = () => {
                 {
                     isScreenDiv ?
                         <>
-                            <div>메뉴</div>
+                            <div>태그목록</div>
                             <Divider sx={{
                                 my: 2,
                                 mr: 20

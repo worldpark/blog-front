@@ -1,11 +1,20 @@
 import {useState} from "react";
 import "./HeaderCSS.css";
 import {Grid} from "@mui/material";
-import HomeSideMenu from "../menu/HomeSideMenu";
+import LoginForm from "../loginForm/LoginForm";
 
 const Header = () => {
 
-    let [title, setTitle] = useState('개발자 블로그');
+    const [title, setTitle] = useState('개발자 블로그');
+    const [loginPopup, setLoginPopup] = useState(false);
+
+    const loginPopupOpen = () => {
+        setLoginPopup(true);
+    }
+
+    const logonPopupClose = () => {
+        setLoginPopup(false);
+    }
 
     return (
         <>
@@ -15,9 +24,15 @@ const Header = () => {
                         <h4>{title}</h4>
                     </Grid>
                     <Grid item xs={8} sx={{textAlign: 'right', pr: '2vw'}}>
-                        <h4>login</h4>
+                        <div style={{height: '100%', display: 'flex', justifyContent: 'right'}}>
+                            <h4 style={{cursor: 'pointer', display: 'inline'}} onClick={() => {loginPopupOpen() }}>owner login</h4>
+                        </div>
                     </Grid>
                 </Grid>
+                <LoginForm
+                    open={loginPopup}
+                    onClose={logonPopupClose}
+                />
             </div>
         </>
     )
