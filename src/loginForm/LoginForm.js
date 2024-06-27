@@ -33,21 +33,10 @@ const LoginForm = (props) => {
             data: loginParam,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
-            }
+            },
+            withCredentials: true
         }).then((result) => {
             console.log(result.data);
-
-        }).catch((error) => {
-            console.log(error);
-        })
-    }
-
-    const test = () => {
-        axios({
-            method: 'POST',
-            url: "http://localhost:8080/test"
-        }).then((response) => {
-            console.log(response.data);
 
         }).catch((error) => {
             console.log(error);
@@ -57,7 +46,7 @@ const LoginForm = (props) => {
     return(
         <Dialog open={open} onClose={onClose}>
             <Box display="flex" flexDirection={'column'} sx={{mx: '70px'}}>
-                <DialogTitle><h4>Login Form</h4></DialogTitle>
+                <DialogTitle>Login Form</DialogTitle>
 
                 <Box display="flex" flexDirection={'column'}>
                     <FormLabel>ID</FormLabel>

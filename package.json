@@ -19,7 +19,8 @@
     "react-router-dom": "latest",
     "@mui/material": "latest",
     "@emotion/react": "latest",
-    "@emotion/styled": "latest"
+    "@emotion/styled": "latest",
+    "js-cookie": "^3.0.5"
   },
   "scripts": {
     "start": "react-scripts start",
