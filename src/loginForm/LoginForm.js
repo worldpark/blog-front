@@ -35,11 +35,14 @@ const LoginForm = (props) => {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
             },
             withCredentials: true
-        }).then((result) => {
-            console.log(result.data);
+        }).then(() => {
+            onClose();
+            document.location.reload();
 
         }).catch((error) => {
-            console.log(error);
+            let errorData;
+            errorData = error.response.data;
+            alert(errorData.message);
         })
     }
 

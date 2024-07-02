@@ -33,39 +33,41 @@ const Header = () => {
             },
             withCredentials: true
         }).then((response) => {
-            status = {
-                userId: response.data,
-                status: true,
-                code: ''
-            }
+            if(response.status === 200){
 
-            dispatch(login({
-                userId: status.userId,
-                status: status.status
-            }));
+                if(response.data.code === '100' || response.data.code === '101'){
+
+                    status = {
+                        userId: '',
+                        status: false,
+                        code: response.data.code
+                    };
+
+                }else{
+                    status = {
+                        userId: response.data,
+                        status: true,
+                        code: ''
+                    };
+
+                    dispatch(login({
+                        userId: status.userId,
+                        status: status.status
+                    }));
+                }
+
+            }else{
+                console.log(response);
+            }
 
         }).catch((error) => {
-            let code = '';
-
-            if (error.response.data.code === 'INVALID_SESSION') {
-                code = error.response.data.code;
-            } else {
-                console.log(error);
-            }
-
-            status = {
-                userId: '',
-                status: false,
-                code: code
-            }
-
-            //dispatch(logout());
+            console.log(error);
 
         })
 
     }, []);
 
-    const logout = () => {
+    const logoutFunction = () => {
         axios({
             url: "http://localhost:8080/logout",
             method: 'GET',
@@ -73,9 +75,9 @@ const Header = () => {
                 'Content-Type': 'application/json'
             },
             withCredentials: true
-        }).then((response) => {
-            console.log(response.data);
+        }).then(() => {
             dispatch(logout());
+            document.location.reload();
 
         }).catch((error) => {
             console.log(error);
@@ -95,7 +97,7 @@ const Header = () => {
                                 loginInfo.status ?
                                     <>
                                         <h4>사용자 : {loginInfo.userId}</h4>
-                                        <h4 style={{cursor: 'pointer', display: 'inline', marginLeft: '20px'}} onClick={() => {logout() }}>Logout</h4>
+                                        <h4 style={{cursor: 'pointer', display: 'inline', marginLeft: '20px'}} onClick={() => {logoutFunction() }}>Logout</h4>
                                     </> :
                                     <>
                                         <h4 style={{cursor: 'pointer', display: 'inline'}} onClick={() => {loginPopupOpen() }}>Owner Login</h4>
