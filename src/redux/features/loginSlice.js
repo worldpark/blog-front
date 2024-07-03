@@ -2,6 +2,7 @@ import {createSlice} from "@reduxjs/toolkit";
 
 const initialStateValue = {
     userId: '',
+    auths: [],
     status: false
 }
 

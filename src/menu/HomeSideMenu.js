@@ -1,7 +1,7 @@
 import {
     Box, Button,
     createSvgIcon,
-    Divider, Icon,
+    Divider,
     Link,
     Tooltip,
     useMediaQuery
@@ -11,7 +11,7 @@ import axios from "axios";
 import {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import { faMinus } from "@fortawesome/free-solid-svg-icons";
+import {faMinus} from "@fortawesome/free-solid-svg-icons";
 
 const HomeSideMenu = () => {
     const isScreenDiv = useMediaQuery('(min-width:1200px)');
@@ -21,6 +21,8 @@ const HomeSideMenu = () => {
 
     const [createHashTagForm, setCreateHashTagForm] = useState(false);
     const [hashTagInput, setHashTagInput] = useState('');
+
+    const [visibleContent, setVisibleContent] = useState(false);
 
     const getHashTagList = () => {
         axios({
@@ -38,10 +40,18 @@ const HomeSideMenu = () => {
     useEffect(() => {
         getHashTagList();
 
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        if(loginInfo.status && loginInfo.auths.includes("ROLE_ADMIN")){
+            setVisibleContent(true);
+        }else{
+            setVisibleContent(false);
+        }
+
+    }, [loginInfo]);
 
     const PlusHashTag = createSvgIcon(
-
         <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -49,7 +59,7 @@ const HomeSideMenu = () => {
             strokeWidth={1.5}
             stroke="currentColor"
         >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
         </svg>,
         'Plus',
     );
@@ -72,16 +82,14 @@ const HomeSideMenu = () => {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
             },
             withCredentials: true
-        }).then((response) => {
-            console.log(response);
-
+        }).then(() => {
             getHashTagList();
             setHashTagInput('');
 
         }).catch((error) => {
-            if(error.response.status === 401 || error.response.status === 403){
+            if (error.response.status === 401 || error.response.status === 403) {
                 alert("해당 권한이 없습니다.");
-            }else{
+            } else {
                 console.log(error);
             }
         })
@@ -91,23 +99,31 @@ const HomeSideMenu = () => {
 
     const deleteHashTag = (hashId) => {
 
-        console.log(hashId);
+        let data = {
+            hashId: hashId
+        }
 
-    }
-
-    const test = () => {
         axios({
-            method: 'POST',
-            url: 'http://localhost:8080/test',
+            method: 'DELETE',
+            url: "http://localhost:8080/hashTag",
+            data: data,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
             },
             withCredentials: true
         }).then((response) => {
-            console.log(response);
+
+            if (response.data.code === '200') {
+                getHashTagList();
+
+            } else {
+                console.log(response.data);
+            }
+
         }).catch((error) => {
             console.log(error);
         })
+
     }
 
     return (
@@ -119,9 +135,10 @@ const HomeSideMenu = () => {
                             <div>
                                 <span style={{fontSize: '20pt'}}>태그목록</span>
                                 {
-                                    loginInfo.status ?
+                                    visibleContent ?
                                         <Tooltip title="태그 추가">
-                                            <PlusHashTag sx={{ml:1}} style={{cursor: "pointer"}} onClick={() => openCreateHashTag()}/>
+                                            <PlusHashTag sx={{ml: 1}} style={{cursor: "pointer"}}
+                                                         onClick={() => openCreateHashTag()}/>
                                         </Tooltip> :
                                         <></>
                                 }
@@ -139,7 +156,8 @@ const HomeSideMenu = () => {
                     createHashTagForm ?
                         <div style={{margin: '2px 0'}}>
 
-                            <input type='text' style={{width: '70px'}} value={hashTagInput} onChange={(event) => setHashTagInput(event.target.value)}/>
+                            <input type='text' style={{width: '70px'}} value={hashTagInput}
+                                   onChange={(event) => setHashTagInput(event.target.value)}/>
                             <Button onClick={() => createHashTag()}>추가</Button>
 
                         </div> :
@@ -148,7 +166,7 @@ const HomeSideMenu = () => {
 
                 {
                     hashTags.map((data, index) => {
-                        return(
+                        return (
                             <div key={index} style={{margin: '4px 0'}}>
                                 <Link href="#"
                                       sx={{
@@ -156,13 +174,18 @@ const HomeSideMenu = () => {
                                           color: 'inherit',
                                           transition: 'color 0.3s ease',
                                           mt: 1,
-                                          '&:hover':{
+                                          '&:hover': {
                                               color: 'primary.main'
                                           }
                                       }}>
                                     {data.hashLabel}
                                 </Link>
-                                <FontAwesomeIcon style={{marginLeft: '8px', cursor: "pointer"}} icon={faMinus} onClick={() => deleteHashTag(data.hashId)}/>
+                                {
+                                    visibleContent ?
+                                        <FontAwesomeIcon style={{marginLeft: '8px', cursor: "pointer"}} icon={faMinus}
+                                                         onClick={() => deleteHashTag(data.hashId)}/> :
+                                        <></>
+                                }
                             </div>
                         )
                     })

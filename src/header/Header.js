@@ -23,7 +23,6 @@ const Header = () => {
     }
 
     useEffect(() => {
-        let status;
 
         axios({
             url: 'http://localhost:8080/check-session',
@@ -33,26 +32,17 @@ const Header = () => {
             },
             withCredentials: true
         }).then((response) => {
+
             if(response.status === 200){
 
                 if(response.data.code === '100' || response.data.code === '101'){
-
-                    status = {
-                        userId: '',
-                        status: false,
-                        code: response.data.code
-                    };
+                    console.log(response.data.message);
 
                 }else{
-                    status = {
-                        userId: response.data,
-                        status: true,
-                        code: ''
-                    };
-
                     dispatch(login({
-                        userId: status.userId,
-                        status: status.status
+                        userId: response.data.userId,
+                        auths: response.data.auths,
+                        status: true
                     }));
                 }
 
