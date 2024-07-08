@@ -2,6 +2,7 @@ import './App.css';
 import {Box, Container, Grid, Link} from "@mui/material";
 import HomeSideMenu from "./menu/HomeSideMenu";
 import Header from "./header/Header";
+import Content from "./content/Content";
 
 function App() {
 
@@ -15,7 +16,7 @@ function App() {
                         <HomeSideMenu/>
                     </Grid>
                     <Grid item lg={8} xs={12}>
-                        content
+                        <Content/>
                     </Grid>
                 </Grid>
             </Container>
