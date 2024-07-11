@@ -14,6 +14,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMinus} from "@fortawesome/free-solid-svg-icons";
 
 const HomeSideMenu = () => {
+
     const isScreenDiv = useMediaQuery('(min-width:1200px)');
     const [hashTags, setHashTags] = useState([]);
 
@@ -133,7 +134,20 @@ const HomeSideMenu = () => {
                     isScreenDiv ?
                         <>
                             <div>
-                                <span style={{fontSize: '20pt'}}>태그목록</span>
+                                <span style={{fontSize: '20pt'}}>
+                                    <Link href="/"
+                                          sx={{
+                                              textDecoration: 'none',
+                                              color: 'inherit',
+                                              transition: 'color 0.3s ease',
+                                              mt: 1,
+                                              '&:hover': {
+                                                  color: 'primary.main'
+                                              }
+                                          }}>
+                                        태그목록
+                                    </Link>
+                                </span>
                                 {
                                     visibleContent ?
                                         <Tooltip title="태그 추가">
@@ -168,7 +182,7 @@ const HomeSideMenu = () => {
                     hashTags.map((data, index) => {
                         return (
                             <div key={index} style={{margin: '4px 0'}}>
-                                <Link href="#"
+                                <Link href={"/hashtag/" + data.hashLabel}
                                       sx={{
                                           textDecoration: 'none',
                                           color: 'inherit',

@@ -1,11 +1,12 @@
 import './App.css';
-import {Box, Container, Grid, Link} from "@mui/material";
+import {Container, Grid} from "@mui/material";
 import HomeSideMenu from "./menu/HomeSideMenu";
 import Header from "./header/Header";
 import Content from "./content/Content";
+import {Route, Routes} from "react-router-dom";
+import BoardView from "./board/BoardView";
 
 function App() {
-
 
     return (
         <div>
@@ -16,7 +17,19 @@ function App() {
                         <HomeSideMenu/>
                     </Grid>
                     <Grid item lg={8} xs={12}>
-                        <Content/>
+                        <Routes>
+                            <Route path="/" element={
+                                <Content />
+                            }/>
+
+                            <Route path="/hashtag/:hashName" element={
+                                <Content/>
+                            }/>
+
+                            <Route path="/boardView/:boardId" element={
+                                <BoardView/>
+                            }/>
+                        </Routes>
                     </Grid>
                 </Grid>
             </Container>

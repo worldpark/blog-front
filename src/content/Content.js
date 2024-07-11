@@ -1,15 +1,23 @@
 import axios from "axios";
 import {useEffect, useState} from "react";
-import {Chip, Divider} from "@mui/material";
+import {Divider} from "@mui/material";
+import {useNavigate, useParams} from "react-router-dom";
 
 
 const Content = () => {
 
+    let navigate = useNavigate();
+
+    const {hashName} = useParams();
     const [boardList, setBoardList] = useState([]);
 
     const getBoardList = () => {
 
         let hashTagName = '';
+
+        if(hashName !== undefined){
+            hashTagName = hashName;
+        }
 
         axios({
             method: "GET",
@@ -35,17 +43,12 @@ const Content = () => {
                 boardList.map((element, index) => {
                     return(
                         <div key={index}>
-                            <h2>{element.boardTitle}</h2>
-                            <p>
-                                {element.boardContent}
-                            </p>
-                            {
-                                element.hashTagList.map((tagElement, index) => {
-                                    return(
-                                        <Chip key={index} sx={{mx: 1}} label={tagElement}/>
-                                    )
-                                })
-                            }
+                            <div style={{height: "200px"}} onClick={() => navigate('/boardView/' + element.board_id)}>
+                                <h2>{element.board_title}</h2>
+                                <p>
+                                    {element.preview_content}
+                                </p>
+                            </div>
                             <Divider sx={{
                                 my: 5
                             }}/>
