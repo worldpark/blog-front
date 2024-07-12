@@ -1,6 +1,6 @@
 import axios from "axios";
 import {useEffect, useState} from "react";
-import {Divider} from "@mui/material";
+import {Button, createTheme, Divider, ThemeProvider} from "@mui/material";
 import {useNavigate, useParams} from "react-router-dom";
 
 
@@ -27,7 +27,7 @@ const Content = () => {
             setBoardList(response.data);
 
         }).catch((error) => {
-            console.log(error);
+            alert(error.response.data.message);
         })
     }
 
@@ -36,15 +36,35 @@ const Content = () => {
 
     }, [])
 
+    const theme = createTheme({
+       palette:{
+           primary: {
+               main: '#000'
+           }
+       }
+    });
 
     return(
         <div>
+            <div>
+                <ThemeProvider theme={theme}>
+                    <Button variant="contained"
+                            color='primary'
+                            style={{fontSize: 'calc(5px + 1vmin)'}}
+                            onClick={()=> navigate('/boardWrite')}
+                    >
+                        글 작성
+                    </Button>
+                </ThemeProvider>
+            </div>
             {
                 boardList.map((element, index) => {
                     return(
                         <div key={index}>
-                            <div style={{height: "200px"}} onClick={() => navigate('/boardView/' + element.board_id)}>
-                                <h2>{element.board_title}</h2>
+                            <div style={{height: "200px", cursor: "pointer"}} onClick={() => navigate('/boardView/' + element.board_id)}>
+                                <h2>
+                                    {element.board_title}
+                                </h2>
                                 <p>
                                     {element.preview_content}
                                 </p>

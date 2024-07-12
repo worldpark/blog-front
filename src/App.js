@@ -5,6 +5,7 @@ import Header from "./header/Header";
 import Content from "./content/Content";
 import {Route, Routes} from "react-router-dom";
 import BoardView from "./board/BoardView";
+import BoardWrite from "./board/BoardWrite";
 
 function App() {
 
@@ -28,6 +29,9 @@ function App() {
 
                             <Route path="/boardView/:boardId" element={
                                 <BoardView/>
+                            }/>
+                            <Route path="/boardWrite" element={
+                                <BoardWrite/>
                             }/>
                         </Routes>
                     </Grid>

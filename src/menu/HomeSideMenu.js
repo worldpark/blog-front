@@ -33,8 +33,8 @@ const HomeSideMenu = () => {
             setHashTags(response.data);
 
         }).catch((error) => {
-            console.log(error);
 
+            alert(error.response.data.detail);
         });
     }
 
@@ -122,7 +122,7 @@ const HomeSideMenu = () => {
             }
 
         }).catch((error) => {
-            console.log(error);
+            alert(error.response.data.message);
         })
 
     }
