@@ -18,6 +18,7 @@ const BoardView = () => {
 
         if (contentData.board_type === 'text') {
             const textContent = document.createElement('p');
+            textContent.style.height = '18px';
             textContent.textContent = contentData.board_content;
             postElement.appendChild(textContent);
 
