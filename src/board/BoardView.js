@@ -12,6 +12,7 @@ const BoardView = () => {
     const [boardData, setBoardData] = useState({});
     const [contentData, setContentData] = useState([]);
     const [hashTagData, setHashTagData] = useState([]);
+    const [createTime, setCreateTime] = useState('');
 
     const createPost = (contentData) => {
         const postElement = document.createElement('div');
@@ -25,7 +26,7 @@ const BoardView = () => {
         } else if (contentData.board_type === 'image') {
             const imgContent = document.createElement('img');
             imgContent.width = 500;
-            imgContent.src = "http://localhost:8080/boardImage/" + contentData.image_path + ".jpg";
+            imgContent.src = "http://localhost:8080/boardImage/" + contentData.image_path;
             postElement.appendChild(imgContent);
         }
 
@@ -41,6 +42,9 @@ const BoardView = () => {
             setBoardData(response.data);
             setContentData(response.data.board_content_list);
             setHashTagData(response.data.hashTags);
+
+            let dateTime = new Date(response.data.create_time);
+            setCreateTime(dateTime.toLocaleString());
 
         }).catch((error) => {
             alert(error.response.data.detail);
@@ -63,9 +67,13 @@ const BoardView = () => {
     return (
         <>
             <div>
-                <p style={{fontSize: '30px'}}>{boardData.board_title}</p>
+                <p style={{fontSize: '30px', margin: '10px 0'}}>{boardData.board_title}</p>
+                <div style={{display: 'flex'}}>
+                    <p style={{marginLeft: 'auto', fontSize: '10px'}}>생성일자 : {createTime}</p>
+                </div>
                 <Divider sx={{
-                    my: 5
+                    mt: 2,
+                    mb: 3
                 }}/>
                 <div ref={contentDiv}>
                 </div>

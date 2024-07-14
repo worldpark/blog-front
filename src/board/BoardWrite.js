@@ -1,14 +1,19 @@
 import {Button, Chip, createTheme, Divider, Popover, TextField, ThemeProvider, Typography} from "@mui/material";
 import {useEffect, useRef, useState} from "react";
 import './Board.css';
+import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 
-const BoardWrite = () => {
+const BoardWrite = ({refresh}) => {
 
+    const navigate = useNavigate();
     const contentDiv = useRef();
     const [hashTag, setHashTag] = useState('');
     const [hashTagList, setHashTagList] = useState([]);
     const [title, setTitle] = useState('');
+
+    const imageFileInput = useRef();
 
     const contentList = () => {
 
@@ -24,28 +29,43 @@ const BoardWrite = () => {
             if(tagType.toLowerCase() === 'div'){
                 data.content_type = 'text';
                 data.board_content = element.textContent;
-                console.log(element.textContent);
             }else if(tagType.toLowerCase() === 'img'){
 
                 data.content_type = 'image';
-                data.image_path = element.getAttribute('src');
-                console.log(element.getAttribute('src'));
+                data.image_path = element.getAttribute('name');
             }
             order += 1;
             result.push(data);
         })
 
-        console.log(result);
         return result;
     }
 
-    const test2 = () => {
+    let imageDataList = [];
 
-        const testImg = document.createElement('img');
-        testImg.width = 500;
-        testImg.src = "http://localhost:8080/boardImage/test1.jpg";
+    const readImage = (inputEvent) => {
 
-        contentDiv.current.appendChild(testImg);
+        let image = inputEvent.target;
+
+        if(image.files && image.files[0]){
+            imageDataList.push(image.files[0]);
+
+            const uploadImage = document.createElement('img');
+            uploadImage.width = 500;
+            let imageData = image.files[0];
+
+            uploadImage.setAttribute("name", image.files[0].name);
+
+            let reader = new FileReader();
+            reader.readAsDataURL(imageData);
+
+            reader.onload = () => {
+                uploadImage.src = reader.result;
+            };
+
+            contentDiv.current.appendChild(uploadImage);
+        }
+        console.log(imageDataList);
 
     }
 
@@ -90,7 +110,7 @@ const BoardWrite = () => {
 
     useEffect(() => {
         contentDiv.current.addEventListener('input', (event) => {
-            /*
+
             const div = event.target;
             const children = Array.from(div.childNodes);
 
@@ -102,7 +122,6 @@ const BoardWrite = () => {
                 div.appendChild(newDiv);
             }
 
-
             children.forEach(child => {
                 if (child.nodeType === Node.TEXT_NODE && child.textContent.trim() !== '') {
                     const newDiv = document.createElement('div');
@@ -111,13 +130,62 @@ const BoardWrite = () => {
                 }
             });
 
-             */
-
         });
 
-        contentDiv.current.innerHTML = '<div><br></div>';
+        //contentDiv.current.innerHTML = '<div><br></div>';
+        const initialDiv = document.createElement('div');
+        initialDiv.textContent = '';
+        contentDiv.current.appendChild(initialDiv);
+        contentDiv.current.focus();
 
-    }, [])
+    }, []);
+
+    const createBoard = () => {
+
+        const contents = contentList();
+
+        let data = {
+            "board_title": title,
+            'board_content_list': contents,
+            'hash_tags': hashTagList
+        }
+
+        axios({
+            method: 'POST',
+            url: 'http://localhost:8080/board/insertBoard',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: data
+        }).then((response) => {
+
+            const imageForm = new FormData();
+
+            imageDataList.map((data) => {
+                imageForm.append('boardImage', data);
+            });
+            imageForm.append('boardId', response.data);
+
+            axios({
+                method: 'POST',
+                url: 'http://localhost:8080/board/uploadImage',
+                headers:{
+                    'Content-Type': 'multipart/form-data'
+                },
+                data: imageForm
+
+            }).then(() => {
+                refresh();
+                navigate('/');
+            }).catch((error) => {
+                console.log(error);
+            })
+
+        }).catch((error) => {
+            console.log(error);
+        })
+
+    };
 
     return (
         <div>
@@ -125,9 +193,7 @@ const BoardWrite = () => {
                 <Button onClick={() => contentList()}>
                     test1
                 </Button>
-                <Button onClick={() => test2()}>
-                    test2
-                </Button>
+                <input type='file' ref={imageFileInput} accept="image/jpg, image/JPG, image/jpeg" onChange={(event) => readImage(event)}/>
                 <TextField
                     required
                     id="outlined-required"
@@ -140,6 +206,11 @@ const BoardWrite = () => {
             <Divider sx={{
                 my: 2
             }}/>
+
+            <Button>
+                test2
+            </Button>
+
             <div ref={contentDiv} className='content-div' contentEditable="true" placeholder='내용을 입력하세요.'>
             </div>
 
@@ -182,6 +253,7 @@ const BoardWrite = () => {
                     <Button
                         style={{fontSize: 'calc(5px + 1vmin)'}}
                         variant="contained"
+                        onClick={() => createBoard()}
                     >
                         작성 완료
                     </Button>

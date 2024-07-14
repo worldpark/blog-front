@@ -8,12 +8,12 @@ import {
 } from "@mui/material";
 import './MenuCSS.css';
 import axios from "axios";
-import {useEffect, useState} from "react";
+import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import {useSelector} from "react-redux";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMinus} from "@fortawesome/free-solid-svg-icons";
 
-const HomeSideMenu = () => {
+const HomeSideMenu = forwardRef((props, ref) => {
 
     const isScreenDiv = useMediaQuery('(min-width:1200px)');
     const [hashTags, setHashTags] = useState([]);
@@ -33,10 +33,13 @@ const HomeSideMenu = () => {
             setHashTags(response.data);
 
         }).catch((error) => {
-
             alert(error.response.data.detail);
         });
     }
+
+    useImperativeHandle(ref, () => ({
+        getHashTagList
+    }));
 
     useEffect(() => {
         getHashTagList();
@@ -207,6 +210,6 @@ const HomeSideMenu = () => {
             </Box>
         </>
     )
-}
+});
 
 export default HomeSideMenu;
