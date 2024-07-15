@@ -26,17 +26,24 @@ const BoardWrite = ({refresh}) => {
             let data = {};
             data.content_order = order;
 
-            if(tagType.toLowerCase() === 'div'){
+            if(tagType === undefined){
+                data.content_type = 'text';
+                data.board_content = element.data;
+            }else if(tagType.toLowerCase() === 'div'){
                 data.content_type = 'text';
                 data.board_content = element.textContent;
             }else if(tagType.toLowerCase() === 'img'){
 
                 data.content_type = 'image';
                 data.image_path = element.getAttribute('name');
+            }else{
+                return;
             }
             order += 1;
             result.push(data);
         })
+
+        console.log(result);
 
         return result;
     }
@@ -52,6 +59,7 @@ const BoardWrite = ({refresh}) => {
 
             const uploadImage = document.createElement('img');
             uploadImage.width = 500;
+            uploadImage.style.display = 'block';
             let imageData = image.files[0];
 
             uploadImage.setAttribute("name", image.files[0].name);
@@ -65,7 +73,6 @@ const BoardWrite = ({refresh}) => {
 
             contentDiv.current.appendChild(uploadImage);
         }
-        console.log(imageDataList);
 
     }
 
@@ -111,6 +118,7 @@ const BoardWrite = ({refresh}) => {
     useEffect(() => {
         contentDiv.current.addEventListener('input', (event) => {
 
+            /*
             const div = event.target;
             const children = Array.from(div.childNodes);
 
@@ -130,13 +138,15 @@ const BoardWrite = ({refresh}) => {
                 }
             });
 
+             */
+
         });
 
         //contentDiv.current.innerHTML = '<div><br></div>';
-        const initialDiv = document.createElement('div');
-        initialDiv.textContent = '';
-        contentDiv.current.appendChild(initialDiv);
-        contentDiv.current.focus();
+        // const initialDiv = document.createElement('div');
+        // initialDiv.textContent = '';
+        // contentDiv.current.appendChild(initialDiv);
+        // contentDiv.current.focus();
 
     }, []);
 
@@ -144,12 +154,15 @@ const BoardWrite = ({refresh}) => {
 
         const contents = contentList();
 
+        console.log(imageDataList);
+
         let data = {
             "board_title": title,
             'board_content_list': contents,
             'hash_tags': hashTagList
         }
 
+        /*
         axios({
             method: 'POST',
             url: 'http://localhost:8080/board/insertBoard',
@@ -184,6 +197,8 @@ const BoardWrite = ({refresh}) => {
         }).catch((error) => {
             console.log(error);
         })
+
+         */
 
     };
 
