@@ -10,7 +10,9 @@ const Content = () => {
 
     const {hashName} = useParams();
     const [boardList, setBoardList] = useState([]);
+    const [observerVisible, setObserverVisible] = useState(true);
 
+    let pageNumber = 0;
     const getBoardList = () => {
 
         let hashTagName = '';
@@ -21,10 +23,16 @@ const Content = () => {
 
         axios({
             method: "GET",
-            url: "http://localhost:8080/board/getBoardList?hashTagName=" + hashTagName,
+            url: "http://localhost:8080/board/getBoardList?hashTagName=" + hashTagName + "&pageNumber=" + pageNumber,
             withCredentials: true
         }).then((response) => {
-            setBoardList(response.data);
+
+            if(response.data == 0 || response.data == undefined){
+                setObserverVisible(false);
+            }
+
+            let copy = [...boardList, ...response.data];
+            setBoardList(copy);
 
         }).catch((error) => {
             alert(error.response.data.message);
@@ -58,6 +66,7 @@ const Content = () => {
                 </ThemeProvider>
             </div>
             {
+                boardList.length > 0 ?
                 boardList.map((element, index) => {
                     return(
                         <div key={index}>
@@ -75,6 +84,10 @@ const Content = () => {
                         </div>
                     )
                 })
+                : <div style={{marginTop: '20px'}}>게시글이 없습니다.</div>
+            }
+            {
+                observerVisible ? <div>observer</div> : <></>
             }
         </div>
     )

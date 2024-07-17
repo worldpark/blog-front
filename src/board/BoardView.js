@@ -1,10 +1,12 @@
-import {Chip, Divider} from "@mui/material";
+import {Button, Chip, createTheme, Divider, ThemeProvider} from "@mui/material";
 import {useEffect, useRef, useState} from "react";
 import axios from "axios";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 
 const BoardView = () => {
+
+    const navigate = useNavigate();
 
     const contentDiv = useRef();
     const {boardId} = useParams();
@@ -64,11 +66,36 @@ const BoardView = () => {
         getBoard();
     }, []);
 
+    const theme = createTheme({
+        palette:{
+            primary: {
+                main: '#000'
+            }
+        }
+    });
+
     return (
         <>
             <div>
                 <p style={{fontSize: '30px', margin: '10px 0'}}>{boardData.board_title}</p>
                 <div style={{display: 'flex'}}>
+                    <ThemeProvider theme={theme}>
+                        <Button variant="contained"
+                                color='primary'
+                                style={{fontSize: 'calc(2px + 1vmin)'}}
+                                size="small"
+                                onClick={() => navigate('/boardUpdate/' + boardData.board_id)}
+                        >
+                            글 수정
+                        </Button>
+                        <Button variant="contained"
+                                color='primary'
+                                style={{fontSize: 'calc(2px + 1vmin)', marginLeft: '6px'}}
+                                size="small"
+                        >
+                            글 삭제
+                        </Button>
+                    </ThemeProvider>
                     <p style={{marginLeft: 'auto', fontSize: '10px'}}>생성일자 : {createTime}</p>
                 </div>
                 <Divider sx={{
@@ -77,14 +104,14 @@ const BoardView = () => {
                 }}/>
                 <div ref={contentDiv}>
                 </div>
-                <div className='hash-tag-div' style={{marginTop: '40px'}}>
+                <div className='hash-tag-div' style={{margin: '40px, 0'}}>
                     {
-                        hashTagData.map((element) => {
+                        hashTagData.map((element, index) => {
 
                             return (
-                                <>
+                                <span key={index}>
                                     <Chip sx={{mx: 1}} label={element.hash_name}/>
-                                </>
+                                </span>
                             )
 
                         })
