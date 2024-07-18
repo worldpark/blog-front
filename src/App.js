@@ -36,7 +36,7 @@ function App() {
                             }/>
 
                             <Route path="/boardView/:boardId" element={
-                                <BoardView/>
+                                <BoardView refresh={menuRefresh}/>
                             }/>
 
                             <Route path="/boardWrite" element={

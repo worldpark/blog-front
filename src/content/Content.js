@@ -1,7 +1,8 @@
 import axios from "axios";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Button, createTheme, Divider, ThemeProvider} from "@mui/material";
 import {useNavigate, useParams} from "react-router-dom";
+import {useSelector} from "react-redux";
 
 
 const Content = () => {
@@ -11,8 +12,22 @@ const Content = () => {
     const {hashName} = useParams();
     const [boardList, setBoardList] = useState([]);
     const [observerVisible, setObserverVisible] = useState(true);
+    const observerRef = useRef();
 
-    let pageNumber = 0;
+    const loginInfo = useSelector((state) => state.loginInfo.value);
+    const [visibleButton, setVisibleButton] = useState(true);
+
+    useEffect(() => {
+        if(loginInfo.status && loginInfo.auths.includes("ROLE_ADMIN")){
+            setVisibleButton(true);
+        }else{
+            setVisibleButton(false);
+        }
+
+    }, [loginInfo]);
+
+    let [pageNumber, setPageNumber] = useState(0);
+
     const getBoardList = () => {
 
         let hashTagName = '';
@@ -27,22 +42,47 @@ const Content = () => {
             withCredentials: true
         }).then((response) => {
 
-            if(response.data == 0 || response.data == undefined){
+            if(response.data.length === 0 || response.data === undefined){
                 setObserverVisible(false);
+            }else{
+                setObserverVisible(true);
+
+                setBoardList((prevBoardList) => [
+                    ...prevBoardList,
+                    ...response.data
+                ]);
+
+                setPageNumber((prevPageNumber) => prevPageNumber + 1);
             }
 
-            let copy = [...boardList, ...response.data];
-            setBoardList(copy);
-
         }).catch((error) => {
-            alert(error.response.data.message);
+            console.log(error);
         })
     }
 
-    useEffect(() => {
-        getBoardList();
+    const onIntersection = (entries) => {
 
-    }, [])
+        const firstEntry = entries[0];
+
+        if(firstEntry.isIntersecting && observerVisible){
+            getBoardList();
+        }
+
+    };
+    useEffect(() => {
+        const observer = new IntersectionObserver(onIntersection);
+
+        if(observerRef.current){
+            observer.observe(observerRef.current);
+        }
+
+        return () => {
+            if(observerRef.current){
+                observer.unobserve(observerRef.current);
+            }
+        }
+
+    }, [pageNumber])
 
     const theme = createTheme({
        palette:{
@@ -54,17 +94,21 @@ const Content = () => {
 
     return(
         <div>
-            <div>
-                <ThemeProvider theme={theme}>
-                    <Button variant="contained"
-                            color='primary'
-                            style={{fontSize: 'calc(5px + 1vmin)'}}
-                            onClick={()=> navigate('/boardWrite')}
-                    >
-                        글 작성
-                    </Button>
-                </ThemeProvider>
-            </div>
+            {
+                visibleButton ?
+                    <div>
+                        <ThemeProvider theme={theme}>
+                            <Button variant="contained"
+                                    color='primary'
+                                    style={{fontSize: 'calc(5px + 1vmin)'}}
+                                    onClick={()=> navigate('/boardWrite')}
+                            >
+                                글 작성
+                            </Button>
+                        </ThemeProvider>
+                    </div>
+                    : <></>
+            }
             {
                 boardList.length > 0 ?
                 boardList.map((element, index) => {
@@ -87,7 +131,7 @@ const Content = () => {
                 : <div style={{marginTop: '20px'}}>게시글이 없습니다.</div>
             }
             {
-                observerVisible ? <div>observer</div> : <></>
+                observerVisible ? <div id='observerId' ref={observerRef}>...loading</div> : <></>
             }
         </div>
     )

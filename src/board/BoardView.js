@@ -2,9 +2,10 @@ import {Button, Chip, createTheme, Divider, ThemeProvider} from "@mui/material";
 import {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import {useNavigate, useParams} from "react-router-dom";
+import {useSelector} from "react-redux";
 
 
-const BoardView = () => {
+const BoardView = ({refresh}) => {
 
     const navigate = useNavigate();
 
@@ -15,6 +16,18 @@ const BoardView = () => {
     const [contentData, setContentData] = useState([]);
     const [hashTagData, setHashTagData] = useState([]);
     const [createTime, setCreateTime] = useState('');
+
+    const loginInfo = useSelector((state) => state.loginInfo.value);
+    const [visibleButton, setVisibleButton] = useState(false);
+
+    useEffect(() => {
+        if (loginInfo.status && loginInfo.auths.includes("ROLE_ADMIN")) {
+            setVisibleButton(true);
+        } else {
+            setVisibleButton(false);
+        }
+
+    }, [loginInfo]);
 
     const createPost = (contentData) => {
         const postElement = document.createElement('div');
@@ -67,37 +80,66 @@ const BoardView = () => {
     }, []);
 
     const theme = createTheme({
-        palette:{
+        palette: {
             primary: {
                 main: '#000'
             }
         }
     });
 
+    const deleteBoard = () => {
+        let data = {
+            boardId: boardId
+        }
+
+        axios({
+            method: 'DELETE',
+            url: 'http://localhost:8080/board/boardDelete',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+            },
+            withCredentials: true,
+            data: data
+        }).then(() => {
+            refresh();
+            navigate('/');
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+
     return (
         <>
             <div>
                 <p style={{fontSize: '30px', margin: '10px 0'}}>{boardData.board_title}</p>
                 <div style={{display: 'flex'}}>
-                    <ThemeProvider theme={theme}>
-                        <Button variant="contained"
-                                color='primary'
-                                style={{fontSize: 'calc(2px + 1vmin)'}}
-                                size="small"
-                                onClick={() => navigate('/boardUpdate/' + boardData.board_id)}
-                        >
-                            글 수정
-                        </Button>
-                        <Button variant="contained"
-                                color='primary'
-                                style={{fontSize: 'calc(2px + 1vmin)', marginLeft: '6px'}}
-                                size="small"
-                        >
-                            글 삭제
-                        </Button>
-                    </ThemeProvider>
+                    {
+                        visibleButton ?
+                            <>
+                                <ThemeProvider theme={theme}>
+                                    <Button variant="contained"
+                                            color='primary'
+                                            style={{fontSize: 'calc(2px + 1vmin)'}}
+                                            size="small"
+                                            onClick={() => navigate('/boardUpdate/' + boardData.board_id)}
+                                    >
+                                        글 수정
+                                    </Button>
+                                    <Button variant="contained"
+                                            color='primary'
+                                            style={{fontSize: 'calc(2px + 1vmin)', marginLeft: '6px'}}
+                                            size="small"
+                                            onClick={() => deleteBoard()}
+                                    >
+                                        글 삭제
+                                    </Button>
+                                </ThemeProvider>
+                            </>
+                            : <></>
+                    }
                     <p style={{marginLeft: 'auto', fontSize: '10px'}}>생성일자 : {createTime}</p>
                 </div>
+
                 <Divider sx={{
                     mt: 2,
                     mb: 3

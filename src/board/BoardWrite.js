@@ -3,6 +3,7 @@ import {useEffect, useRef, useState} from "react";
 import './Board.css';
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import {useSelector} from "react-redux";
 
 
 const BoardWrite = ({refresh}) => {
@@ -14,6 +15,16 @@ const BoardWrite = ({refresh}) => {
     const [title, setTitle] = useState('');
 
     const imageFileInput = useRef();
+
+    const loginInfo = useSelector((state) => state.loginInfo.value);
+
+    useEffect(() => {
+        if(!loginInfo.status || !loginInfo.auths.includes("ROLE_ADMIN")){
+            alert('접근 권한이 없습니다.');
+            navigate('/');
+        }
+
+    }, [loginInfo]);
 
     const contentList = () => {
 
@@ -129,6 +140,7 @@ const BoardWrite = ({refresh}) => {
             headers: {
                 'Content-Type': 'application/json'
             },
+            withCredentials: true,
             data: data
         }).then((response) => {
 
@@ -146,6 +158,7 @@ const BoardWrite = ({refresh}) => {
                     headers:{
                         'Content-Type': 'multipart/form-data'
                     },
+                    withCredentials: true,
                     data: imageForm
 
                 }).then(() => {

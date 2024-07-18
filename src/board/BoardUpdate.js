@@ -2,6 +2,7 @@ import {Button, Chip, createTheme, Divider, Popover, TextField, ThemeProvider, T
 import {useEffect, useRef, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
+import {useSelector} from "react-redux";
 
 const BoardUpdate = ({refresh}) => {
 
@@ -14,6 +15,16 @@ const BoardUpdate = ({refresh}) => {
     const [hashTagList, setHashTagList] = useState([]);
     const [title, setTitle] = useState('');
     const imageFileInput = useRef();
+
+    const loginInfo = useSelector((state) => state.loginInfo.value);
+
+    useEffect(() => {
+        if(!loginInfo.status || !loginInfo.auths.includes("ROLE_ADMIN")){
+            alert('접근 권한이 없습니다.');
+            navigate('/');
+        }
+
+    }, [loginInfo]);
 
     const theme = createTheme({
         palette:{
@@ -86,7 +97,8 @@ const BoardUpdate = ({refresh}) => {
 
         axios({
             method: 'GET',
-            url: 'http://localhost:8080/board/getBoardContent?boardId=' + boardId
+            url: 'http://localhost:8080/board/getBoardContent?boardId=' + boardId,
+            withCredentials: true
         }).then((response) => {
             setTitle(response.data.board_title);
             setContentData(response.data.board_content_list);
@@ -165,6 +177,7 @@ const BoardUpdate = ({refresh}) => {
             headers: {
                 'Content-Type': 'application/json'
             },
+            withCredentials: true,
             data: data
         }).then(() => {
 
@@ -182,6 +195,7 @@ const BoardUpdate = ({refresh}) => {
                     headers:{
                         'Content-Type': 'multipart/form-data'
                     },
+                    withCredentials: true,
                     data: imageForm
 
                 }).then(() => {
