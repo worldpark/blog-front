@@ -33,7 +33,11 @@ const HomeSideMenu = forwardRef((props, ref) => {
             setHashTags(response.data);
 
         }).catch((error) => {
-            alert(error.response.data.detail);
+            if(error.response.data.code != undefined){
+                alert(error.response.data.detail);
+            }else{
+                alert('오류가 발생하였습니다.');
+            }
         });
     }
 
@@ -125,7 +129,11 @@ const HomeSideMenu = forwardRef((props, ref) => {
             }
 
         }).catch((error) => {
-            alert(error.response.data.message);
+            if(error.response.data.code != undefined){
+                alert(error.response.data.detail);
+            }else{
+                alert('오류가 발생하였습니다.');
+            }
         })
 
     }

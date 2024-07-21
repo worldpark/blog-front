@@ -46,13 +46,10 @@ const Header = () => {
                     }));
                 }
 
-            }else{
-                console.log(response);
             }
 
-        }).catch((error) => {
-            console.log(error);
-
+        }).catch(() => {
+            console.log('세션 체크 실패');
         })
 
     }, []);
@@ -69,8 +66,9 @@ const Header = () => {
             dispatch(logout());
             document.location.reload();
 
-        }).catch((error) => {
-            console.log(error);
+        }).catch(() => {
+            alert('로그아웃에 실패하였습니다.');
+
         });
     }
 
@@ -90,7 +88,7 @@ const Header = () => {
                                         <h4 style={{cursor: 'pointer', display: 'inline', marginLeft: '20px'}} onClick={() => {logoutFunction() }}>Logout</h4>
                                     </> :
                                     <>
-                                        <h4 style={{cursor: 'pointer', display: 'inline'}} onClick={() => {loginPopupOpen() }}>Owner Login</h4>
+                                        <h4 style={{cursor: 'pointer', display: 'inline'}} onClick={() => {loginPopupOpen() }}>Login</h4>
                                     </>
                             }
                         </div>

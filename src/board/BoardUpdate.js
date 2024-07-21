@@ -19,7 +19,7 @@ const BoardUpdate = ({refresh}) => {
     const loginInfo = useSelector((state) => state.loginInfo.value);
 
     useEffect(() => {
-        if(!loginInfo.status || !loginInfo.auths.includes("ROLE_ADMIN")){
+        if (!loginInfo.status || !loginInfo.auths.includes("ROLE_ADMIN")) {
             alert('접근 권한이 없습니다.');
             navigate('/');
         }
@@ -27,7 +27,7 @@ const BoardUpdate = ({refresh}) => {
     }, [loginInfo]);
 
     const theme = createTheme({
-        palette:{
+        palette: {
             primary: {
                 main: '#000'
             }
@@ -51,7 +51,7 @@ const BoardUpdate = ({refresh}) => {
 
         let image = inputEvent.target;
 
-        if(image.files && image.files[0]){
+        if (image.files && image.files[0]) {
             imageDataList.push(image.files[0]);
 
             const uploadImage = document.createElement('img');
@@ -76,9 +76,9 @@ const BoardUpdate = ({refresh}) => {
     const pushHashTag = (event) => {
         let copy = [...hashTagList];
 
-        if(copy.includes(hashTag)){
+        if (copy.includes(hashTag)) {
             popoverOpen(event);
-        }else{
+        } else {
             copy.push(hashTag);
             setHashTag('');
             setHashTagList(copy);
@@ -113,7 +113,11 @@ const BoardUpdate = ({refresh}) => {
             setHashTagList(hashList);
 
         }).catch((error) => {
-            alert(error.response.data.detail);
+            if (error.response.data.code != undefined) {
+                alert(error.response.data.detail);
+            } else {
+                alert('오류가 발생하였습니다.');
+            }
 
         })
     }
@@ -133,24 +137,24 @@ const BoardUpdate = ({refresh}) => {
             let data = {};
             data.content_order = order;
 
-            if(tagType === undefined){
+            if (tagType === undefined) {
                 data.content_type = 'text';
                 data.board_content = element.data;
-            }else if(tagType.toLowerCase() === 'div'){
+            } else if (tagType.toLowerCase() === 'div') {
                 data.content_type = 'text';
                 data.board_content = element.textContent;
-            }else if(tagType.toLowerCase() === 'img'){
+            } else if (tagType.toLowerCase() === 'img') {
 
                 data.content_type = 'image';
                 data.image_path = element.getAttribute('name');
 
-                if(element.getAttribute('id') === 'exists'){
+                if (element.getAttribute('id') === 'exists') {
                     data.exists = true;
-                }else{
+                } else {
                     data.exists = false;
                 }
 
-            }else{
+            } else {
                 return;
             }
             order += 1;
@@ -181,7 +185,7 @@ const BoardUpdate = ({refresh}) => {
             data: data
         }).then(() => {
 
-            if(imageDataList.length > 0){
+            if (imageDataList.length > 0) {
                 const imageForm = new FormData();
 
                 imageDataList.map((data) => {
@@ -192,7 +196,7 @@ const BoardUpdate = ({refresh}) => {
                 axios({
                     method: 'POST',
                     url: 'http://localhost:8080/board/uploadImage',
-                    headers:{
+                    headers: {
                         'Content-Type': 'multipart/form-data'
                     },
                     withCredentials: true,
@@ -202,20 +206,28 @@ const BoardUpdate = ({refresh}) => {
                     refresh();
                     navigate('/');
                 }).catch((error) => {
-                    console.log(error);
+                    if (error.response.data.code != undefined) {
+                        alert(error.response.data.detail);
+                    } else {
+                        alert('오류가 발생하였습니다.');
+                    }
                 })
-            }else{
+            } else {
                 refresh();
                 navigate('/');
             }
 
         }).catch((error) => {
-            console.log(error);
+            if (error.response.data.code != undefined) {
+                alert(error.response.data.detail);
+            } else {
+                alert('오류가 발생하였습니다.');
+            }
         })
 
     };
 
-    return(
+    return (
         <div>
             <div>
                 <input type='file' ref={imageFileInput} style={{display: 'none'}}
@@ -242,15 +254,16 @@ const BoardUpdate = ({refresh}) => {
             >
                 {
                     contentData.map((content, index) => {
-                        if(content.board_type === 'text'){
-                            return(
+                        if (content.board_type === 'text') {
+                            return (
                                 <div key={index} style={{height: '18px'}}>
                                     {content.board_content}
                                 </div>
                             )
-                        }else if(content.board_type === 'image'){
+                        } else if (content.board_type === 'image') {
                             return (
-                                <img key={index} id='exists' name={content.image_path} width={500} src={'http://localhost:8080/boardImage/' + content.image_path}/>
+                                <img key={index} id='exists' name={content.image_path} width={500}
+                                     src={'http://localhost:8080/boardImage/' + content.image_path}/>
 
                             )
                         }
@@ -264,14 +277,15 @@ const BoardUpdate = ({refresh}) => {
                        style={{marginLeft: '5px'}}
                        value='추가'
                        onClick={(event) => pushHashTag(event)}/>
-                <div style={{width: '100%'
-                    , marginTop:'5px'
+                <div style={{
+                    width: '100%'
+                    , marginTop: '5px'
                     , borderRadius: '5px'
                     , minHeight: '34px'
                 }}>
                     {
                         hashTagList.map((tag, index) => {
-                            return(
+                            return (
                                 <>
                                     <Chip key={index} sx={{mx: 1}} label={tag} onDelete={() => deleteHashTag(index)}/>
                                 </>
@@ -306,7 +320,8 @@ const BoardUpdate = ({refresh}) => {
                         variant="contained"
                         onClick={() => {
                             refresh();
-                            navigate('/');}}
+                            navigate('/');
+                        }}
                     >
                         취소
                     </Button>

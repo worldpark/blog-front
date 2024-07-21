@@ -62,7 +62,11 @@ const BoardView = ({refresh}) => {
             setCreateTime(dateTime.toLocaleString());
 
         }).catch((error) => {
-            alert(error.response.data.detail);
+            if(error.response.data.code != undefined){
+                alert(error.response.data.detail);
+            }else{
+                alert('오류가 발생하였습니다.');
+            }
 
         })
     }
@@ -104,7 +108,11 @@ const BoardView = ({refresh}) => {
             refresh();
             navigate('/');
         }).catch((error) => {
-            console.log(error);
+            if(error.response.data.code != undefined){
+                alert(error.response.data.detail);
+            }else{
+                alert('오류가 발생하였습니다.');
+            }
         })
     }
 

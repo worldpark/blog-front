@@ -40,9 +40,11 @@ const LoginForm = (props) => {
             document.location.reload();
 
         }).catch((error) => {
-            let errorData;
-            errorData = error.response.data;
-            alert(errorData.message);
+            if(error.response.data.code != undefined){
+                alert(error.response.data.detail);
+            }else{
+                alert('오류가 발생하였습니다.');
+            }
         })
     }
 

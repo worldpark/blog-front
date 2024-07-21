@@ -19,7 +19,7 @@ const BoardWrite = ({refresh}) => {
     const loginInfo = useSelector((state) => state.loginInfo.value);
 
     useEffect(() => {
-        if(!loginInfo.status || !loginInfo.auths.includes("ROLE_ADMIN")){
+        if (!loginInfo.status || !loginInfo.auths.includes("ROLE_ADMIN")) {
             alert('접근 권한이 없습니다.');
             navigate('/');
         }
@@ -37,17 +37,17 @@ const BoardWrite = ({refresh}) => {
             let data = {};
             data.content_order = order;
 
-            if(tagType === undefined){
+            if (tagType === undefined) {
                 data.content_type = 'text';
                 data.board_content = element.data;
-            }else if(tagType.toLowerCase() === 'div'){
+            } else if (tagType.toLowerCase() === 'div') {
                 data.content_type = 'text';
                 data.board_content = element.textContent;
-            }else if(tagType.toLowerCase() === 'img'){
+            } else if (tagType.toLowerCase() === 'img') {
 
                 data.content_type = 'image';
                 data.image_path = element.getAttribute('name');
-            }else{
+            } else {
                 return;
             }
             order += 1;
@@ -63,7 +63,7 @@ const BoardWrite = ({refresh}) => {
 
         let image = inputEvent.target;
 
-        if(image.files && image.files[0]){
+        if (image.files && image.files[0]) {
             imageDataList.push(image.files[0]);
 
             const uploadImage = document.createElement('img');
@@ -86,7 +86,7 @@ const BoardWrite = ({refresh}) => {
     }
 
     const theme = createTheme({
-        palette:{
+        palette: {
             primary: {
                 main: '#000'
             }
@@ -100,9 +100,9 @@ const BoardWrite = ({refresh}) => {
     const pushHashTag = (event) => {
         let copy = [...hashTagList];
 
-        if(copy.includes(hashTag)){
+        if (copy.includes(hashTag)) {
             popoverOpen(event);
-        }else{
+        } else {
             copy.push(hashTag);
             setHashTag('');
             setHashTagList(copy);
@@ -144,7 +144,7 @@ const BoardWrite = ({refresh}) => {
             data: data
         }).then((response) => {
 
-            if(imageDataList.length > 0){
+            if (imageDataList.length > 0) {
                 const imageForm = new FormData();
 
                 imageDataList.map((data) => {
@@ -155,7 +155,7 @@ const BoardWrite = ({refresh}) => {
                 axios({
                     method: 'POST',
                     url: 'http://localhost:8080/board/uploadImage',
-                    headers:{
+                    headers: {
                         'Content-Type': 'multipart/form-data'
                     },
                     withCredentials: true,
@@ -165,15 +165,23 @@ const BoardWrite = ({refresh}) => {
                     refresh();
                     navigate('/');
                 }).catch((error) => {
-                    console.log(error);
+                    if (error.response.data.code != undefined) {
+                        alert(error.response.data.detail);
+                    } else {
+                        alert('오류가 발생하였습니다.');
+                    }
                 })
-            }else{
+            } else {
                 refresh();
                 navigate('/');
             }
 
         }).catch((error) => {
-            console.log(error);
+            if (error.response.data.code != undefined) {
+                alert(error.response.data.detail);
+            } else {
+                alert('오류가 발생하였습니다.');
+            }
         })
 
     };
@@ -209,14 +217,15 @@ const BoardWrite = ({refresh}) => {
                        style={{marginLeft: '5px'}}
                        value='추가'
                        onClick={(event) => pushHashTag(event)}/>
-                <div style={{width: '100%'
-                        , marginTop:'5px'
-                        , borderRadius: '5px'
-                        , minHeight: '34px'
+                <div style={{
+                    width: '100%'
+                    , marginTop: '5px'
+                    , borderRadius: '5px'
+                    , minHeight: '34px'
                 }}>
                     {
                         hashTagList.map((tag, index) => {
-                            return(
+                            return (
                                 <>
                                     <Chip sx={{mx: 1}} label={tag} onDelete={() => deleteHashTag(index)}/>
                                 </>
