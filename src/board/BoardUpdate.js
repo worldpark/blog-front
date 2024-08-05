@@ -17,6 +17,7 @@ const BoardUpdate = ({refresh}) => {
     const imageFileInput = useRef();
 
     const loginInfo = useSelector((state) => state.loginInfo.value);
+    const serverUrl = useSelector((state)=> state.serverUrl.value);
 
     useEffect(() => {
         if (!loginInfo.status || !loginInfo.auths.includes("ROLE_ADMIN")) {
@@ -97,7 +98,7 @@ const BoardUpdate = ({refresh}) => {
 
         axios({
             method: 'GET',
-            url: 'http://localhost:8080/board/getBoardContent?boardId=' + boardId,
+            url: serverUrl.url + '/board/getBoardContent?boardId=' + boardId,
             withCredentials: true
         }).then((response) => {
             setTitle(response.data.board_title);
@@ -113,9 +114,9 @@ const BoardUpdate = ({refresh}) => {
             setHashTagList(hashList);
 
         }).catch((error) => {
-            if (error.response.data.code != undefined) {
+            try{
                 alert(error.response.data.detail);
-            } else {
+            }catch (err){
                 alert('오류가 발생하였습니다.');
             }
 
@@ -177,7 +178,7 @@ const BoardUpdate = ({refresh}) => {
 
         axios({
             method: 'PUT',
-            url: 'http://localhost:8080/board/updateBoard',
+            url: serverUrl.url + '/board/updateBoard',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -195,7 +196,7 @@ const BoardUpdate = ({refresh}) => {
 
                 axios({
                     method: 'POST',
-                    url: 'http://localhost:8080/board/uploadImage',
+                    url: serverUrl.url + '/board/uploadImage',
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     },
@@ -206,9 +207,9 @@ const BoardUpdate = ({refresh}) => {
                     refresh();
                     navigate('/');
                 }).catch((error) => {
-                    if (error.response.data.code != undefined) {
+                    try{
                         alert(error.response.data.detail);
-                    } else {
+                    }catch (err){
                         alert('오류가 발생하였습니다.');
                     }
                 })
@@ -218,9 +219,9 @@ const BoardUpdate = ({refresh}) => {
             }
 
         }).catch((error) => {
-            if (error.response.data.code != undefined) {
+            try{
                 alert(error.response.data.detail);
-            } else {
+            }catch (err){
                 alert('오류가 발생하였습니다.');
             }
         })
@@ -256,14 +257,14 @@ const BoardUpdate = ({refresh}) => {
                     contentData.map((content, index) => {
                         if (content.board_type === 'text') {
                             return (
-                                <div key={index} style={{height: '18px'}}>
+                                <div key={index} style={{minHeight: '18px'}}>
                                     {content.board_content}
                                 </div>
                             )
                         } else if (content.board_type === 'image') {
                             return (
                                 <img key={index} id='exists' name={content.image_path} width={500}
-                                     src={'http://localhost:8080/boardImage/' + content.image_path}/>
+                                     src={serverUrl.url + '/boardImage/' + content.image_path}/>
 
                             )
                         }
@@ -320,7 +321,7 @@ const BoardUpdate = ({refresh}) => {
                         variant="contained"
                         onClick={() => {
                             refresh();
-                            navigate('/');
+                            navigate('/boardView/' + boardId);
                         }}
                     >
                         취소

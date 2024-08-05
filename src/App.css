@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+
+.user-status-div{
+  background-color: #B2EBF2;
+  display: flex;
+  padding: 0 10px;
+  width: 200px;
+  border: 1px solid lightgray;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}

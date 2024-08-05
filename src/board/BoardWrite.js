@@ -17,6 +17,7 @@ const BoardWrite = ({refresh}) => {
     const imageFileInput = useRef();
 
     const loginInfo = useSelector((state) => state.loginInfo.value);
+    const serverUrl = useSelector((state)=> state.serverUrl.value);
 
     useEffect(() => {
         if (!loginInfo.status || !loginInfo.auths.includes("ROLE_ADMIN")) {
@@ -136,7 +137,7 @@ const BoardWrite = ({refresh}) => {
 
         axios({
             method: 'POST',
-            url: 'http://localhost:8080/board/insertBoard',
+            url: serverUrl.url + '/board/insertBoard',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -154,7 +155,7 @@ const BoardWrite = ({refresh}) => {
 
                 axios({
                     method: 'POST',
-                    url: 'http://localhost:8080/board/uploadImage',
+                    url: serverUrl.url + '/board/uploadImage',
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     },
@@ -165,9 +166,9 @@ const BoardWrite = ({refresh}) => {
                     refresh();
                     navigate('/');
                 }).catch((error) => {
-                    if (error.response.data.code != undefined) {
+                    try{
                         alert(error.response.data.detail);
-                    } else {
+                    }catch (err){
                         alert('오류가 발생하였습니다.');
                     }
                 })
@@ -177,9 +178,9 @@ const BoardWrite = ({refresh}) => {
             }
 
         }).catch((error) => {
-            if (error.response.data.code != undefined) {
+            try{
                 alert(error.response.data.detail);
-            } else {
+            }catch (err){
                 alert('오류가 발생하였습니다.');
             }
         })

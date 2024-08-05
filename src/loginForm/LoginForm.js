@@ -2,6 +2,7 @@ import {Box, Button, createTheme, Dialog, DialogTitle, FormLabel, TextField, The
 import {grey} from "@mui/material/colors";
 import {useState} from "react";
 import axios from "axios";
+import {useSelector} from "react-redux";
 
 const LoginForm = (props) => {
 
@@ -9,6 +10,8 @@ const LoginForm = (props) => {
 
     const [userId, setUserId] = useState('');
     const [userPW, setUserPW] = useState('');
+
+    const serverUrl = useSelector((state)=> state.serverUrl.value);
 
     const theme = createTheme({
         palette: {
@@ -29,7 +32,7 @@ const LoginForm = (props) => {
 
         axios({
             method: 'POST',
-            url: 'http://localhost:8080/login/login-proc',
+            url: serverUrl.url + '/login/login-proc',
             data: loginParam,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
@@ -40,9 +43,9 @@ const LoginForm = (props) => {
             document.location.reload();
 
         }).catch((error) => {
-            if(error.response.data.code != undefined){
+            try{
                 alert(error.response.data.detail);
-            }else{
+            }catch (err){
                 alert('오류가 발생하였습니다.');
             }
         })

@@ -8,6 +8,7 @@ import BoardView from "./board/BoardView";
 import BoardWrite from "./board/BoardWrite";
 import {useRef} from "react";
 import BoardUpdate from "./board/BoardUpdate";
+import {useSelector} from "react-redux";
 
 function App() {
 
@@ -17,12 +18,24 @@ function App() {
         sideMenuRef.current.getHashTagList();
     }
 
+    const loginInfo = useSelector((state) => state.loginInfo.value);
+
     return (
         <div>
             <Header/>
-            <Container sx={{pt:20}}>
+            <Container sx={{py:20}}>
                 <Grid container spacing={2}>
                     <Grid item lg={4} xs={12}>
+                        <div className={'user-status-div'}>
+                            <div style={{width: '100%'}}>
+                                <p>사용자</p>
+                                <p>역할</p>
+                            </div>
+                            <div style={{width: '100%'}}>
+                                <p>: {loginInfo.userId}</p>
+                                <p>: {loginInfo.auths}</p>
+                            </div>
+                        </div>
                         <HomeSideMenu ref={sideMenuRef}/>
                     </Grid>
                     <Grid item lg={8} xs={12}>

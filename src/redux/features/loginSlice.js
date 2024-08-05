@@ -1,8 +1,8 @@
 import {createSlice} from "@reduxjs/toolkit";
 
 const initialStateValue = {
-    userId: '',
-    auths: [],
+    userId: 'anonymous',
+    auths: ['anonymous'],
     status: false
 }
 

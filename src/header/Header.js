@@ -12,6 +12,7 @@ const Header = () => {
     const [loginPopup, setLoginPopup] = useState(false);
 
     const loginInfo = useSelector((state) => state.loginInfo.value);
+    const serverUrl = useSelector((state)=> state.serverUrl.value);
     const dispatch = useDispatch();
 
     const loginPopupOpen = () => {
@@ -25,7 +26,7 @@ const Header = () => {
     useEffect(() => {
 
         axios({
-            url: 'http://localhost:8080/check-session',
+            url: serverUrl.url + '/check-session',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -56,7 +57,7 @@ const Header = () => {
 
     const logoutFunction = () => {
         axios({
-            url: "http://localhost:8080/logout",
+            url: serverUrl.url + "/logout",
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'

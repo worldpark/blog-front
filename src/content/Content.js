@@ -15,6 +15,7 @@ const Content = () => {
     const observerRef = useRef();
 
     const loginInfo = useSelector((state) => state.loginInfo.value);
+    const serverUrl = useSelector((state)=> state.serverUrl.value);
     const [visibleButton, setVisibleButton] = useState(true);
 
     useEffect(() => {
@@ -38,7 +39,7 @@ const Content = () => {
 
         axios({
             method: "GET",
-            url: "http://localhost:8080/board/getBoardList?hashTagName=" + hashTagName + "&pageNumber=" + pageNumber,
+            url: serverUrl.url + "/board/getBoardList?hashTagName=" + hashTagName + "&pageNumber=" + pageNumber,
             withCredentials: true
         }).then((response) => {
 
@@ -56,9 +57,9 @@ const Content = () => {
             }
 
         }).catch((error) => {
-            if(error.response.data.code != undefined){
+            try{
                 alert(error.response.data.detail);
-            }else{
+            }catch (err){
                 alert('오류가 발생하였습니다.');
             }
         })
@@ -125,6 +126,21 @@ const Content = () => {
                                 <p>
                                     {element.preview_content}
                                 </p>
+                                <div style={{display: 'flex'}}>
+                                    <p style={{display: 'inline-block', margin: '0 auto'}}>
+                                        ...
+                                    </p>
+                                </div>
+                                <div style={{display: 'flex'}}>
+                                    <p style={{display: 'inline-block', margin: '0 auto'}}>
+                                        ...
+                                    </p>
+                                </div>
+                                <div style={{display: 'flex'}}>
+                                    <p style={{display: 'inline-block', margin: '0 auto'}}>
+                                        ...
+                                    </p>
+                                </div>
                             </div>
                             <Divider sx={{
                                 my: 5

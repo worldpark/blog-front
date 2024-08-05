@@ -19,6 +19,7 @@ const HomeSideMenu = forwardRef((props, ref) => {
     const [hashTags, setHashTags] = useState([]);
 
     const loginInfo = useSelector((state) => state.loginInfo.value);
+    const serverUrl = useSelector((state)=> state.serverUrl.value);
 
     const [createHashTagForm, setCreateHashTagForm] = useState(false);
     const [hashTagInput, setHashTagInput] = useState('');
@@ -28,14 +29,14 @@ const HomeSideMenu = forwardRef((props, ref) => {
     const getHashTagList = () => {
         axios({
             method: "POST",
-            url: "http://localhost:8080/getHashTagList"
+            url: serverUrl.url + "/getHashTagList"
         }).then((response) => {
             setHashTags(response.data);
 
         }).catch((error) => {
-            if(error.response.data.code != undefined){
+            try{
                 alert(error.response.data.detail);
-            }else{
+            }catch (err){
                 alert('오류가 발생하였습니다.');
             }
         });
@@ -84,7 +85,7 @@ const HomeSideMenu = forwardRef((props, ref) => {
 
         axios({
             method: 'POST',
-            url: 'http://localhost:8080/setHashTag',
+            url: serverUrl.url + '/setHashTag',
             data: data,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
@@ -113,7 +114,7 @@ const HomeSideMenu = forwardRef((props, ref) => {
 
         axios({
             method: 'DELETE',
-            url: "http://localhost:8080/hashTag",
+            url: serverUrl.url + "/hashTag",
             data: data,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
@@ -129,9 +130,9 @@ const HomeSideMenu = forwardRef((props, ref) => {
             }
 
         }).catch((error) => {
-            if(error.response.data.code != undefined){
+            try{
                 alert(error.response.data.detail);
-            }else{
+            }catch (err){
                 alert('오류가 발생하였습니다.');
             }
         })
@@ -204,6 +205,7 @@ const HomeSideMenu = forwardRef((props, ref) => {
                                           }
                                       }}>
                                     {data.hashLabel}
+                                    <span style={{fontSize: '0.8rem'}}> ({data.boardCount})</span>
                                 </Link>
                                 {
                                     visibleContent ?
