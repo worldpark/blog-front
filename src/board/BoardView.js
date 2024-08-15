@@ -107,7 +107,7 @@ const BoardView = ({refresh}) => {
             method: 'DELETE',
             url: serverUrl.url + '/board/boardDelete',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+                'Content-Type': 'application/json'
             },
             withCredentials: true,
             data: data
@@ -157,7 +157,7 @@ const BoardView = ({refresh}) => {
             method: 'POST',
             url: serverUrl.url + '/board/insertComment',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+                'Content-Type': 'application/json'
             },
             withCredentials: true,
             data: pushData
@@ -190,7 +190,7 @@ const BoardView = ({refresh}) => {
             method: 'DELETE',
             url: serverUrl.url + '/board/deleteComment',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+                'Content-Type': 'application/json'
             },
             data: pushData
         }).then((response) => {
@@ -219,7 +219,7 @@ const BoardView = ({refresh}) => {
             method: 'PUT',
             url: serverUrl.url + '/board/blindComment',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+                'Content-Type': 'application/json'
             },
             withCredentials: true,
             data: pushData

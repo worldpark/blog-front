@@ -33,6 +33,7 @@ const Header = () => {
             },
             withCredentials: true
         }).then((response) => {
+            console.log(response.data);
 
             if(response.status === 200){
 

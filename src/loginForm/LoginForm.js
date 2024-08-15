@@ -44,7 +44,7 @@ const LoginForm = (props) => {
 
         }).catch((error) => {
             try{
-                alert(error.response.data.detail);
+                alert(error.response.data.message);
             }catch (err){
                 alert('오류가 발생하였습니다.');
             }
